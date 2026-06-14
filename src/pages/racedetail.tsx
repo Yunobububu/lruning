@@ -11,7 +11,21 @@ interface Race {
   gearImg?: string; gearBagImg?: string; finishBagImg?: string;
 }
 
-const races = racesData.races as Race[];
+const races: Race[] = racesData.races.map(r => {
+  const prefix = (path: string | undefined) =>
+    path?.startsWith('/') ? import.meta.env.BASE_URL + path.slice(1) : path;
+  return {
+    ...r,
+    certImg: prefix(r.certImg),
+    medalImg: prefix(r.medalImg),
+    trackImg: prefix(r.trackImg),
+    bibImg: prefix(r.bibImg),
+    gearImg: prefix(r.gearImg),
+    gearBagImg: prefix(r.gearBagImg),
+    finishBagImg: prefix(r.finishBagImg),
+    photos: r.photos?.map(p => prefix(p)) as string[] | undefined,
+  };
+});
 
 const paceToStr = (s: number) => {
   const min = Math.floor(s / 60);
