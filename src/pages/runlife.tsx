@@ -86,7 +86,7 @@ const RunLife = () => {
 
   const downloadSVG = () => {
     const a = document.createElement('a');
-    a.href = '/running-life.svg';
+    a.href = `${import.meta.env.BASE_URL}running-life.svg`;
     a.download = 'running-life.svg';
     a.click();
   };
