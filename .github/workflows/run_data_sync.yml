@@ -3,31 +3,32 @@ name: Run Data Sync
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 1 * * *'
-  # push 到 master 时触发（并发时只保留最新一次，避免循环触发）
+    - cron: '0 0 * * *'   # 每天 UTC 0:00 (北京时间 8:00)
   push:
     branches:
       - master
-
-# 只保留最新一次运行，避免 git push 触发循环
-concurrency:
-  group: run-data-sync
-  cancel-in-progress: true
+    paths:
+      - run_page/strava_sync.py
+      - run_page/gen_svg.py
+      - run_page/gen_trackwall.py
+      - run_page/gen_heatmap.py
+      - run_page/gen_runlife.py
+      - requirements.txt
 
 env:
-  ATHLETE: lyuiii
-  TITLE: lyuiii Running
-  TITLE_GRID: Running Records
-  TITLE_GITHUB: lyuiii Running
-  MIN_GRID_DISTANCE: 5
+  RUN_TYPE: strava
+  ATHLETE: 荆轲
+  TITLE: 荆轲 Running
+  TITLE_GRID: Over 10km Runs
+  MIN_GRID_DISTANCE: 10
+  BUILD_GH_PAGES: false
+  GENERATE_MONTH_OF_LIFE: false
+  SAVE_DATA_IN_GITHUB_CACHE: false
 
 jobs:
   sync:
-    name: Sync & Generate SVGs
+    name: Sync & Build
     runs-on: ubuntu-latest
-    outputs:
-      commit_needed: ${{ steps.commit.outputs.commit_needed }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,95 +40,61 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: pip
+          cache-dependency-path: 'requirements.txt'
 
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      - name: Sync Strava data
-        run: python run_page/strava_sync.py ${{ secrets.STRAVA_CLIENT_ID }} ${{ secrets.STRAVA_CLIENT_SECRET }} ${{ secrets.STRAVA_REFRESH_TOKEN }} --only-run
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
 
-      # 修复数据库里损坏的 Interval 记录（run_id=1196979659: elapsed/moving_time 存成了整数而非字符串）
-      - name: Fix corrupted DB record
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+
+      - name: Install Node dependencies
+        run: pnpm install
+
+      # ═══ Step 1: Sync Strava Data ═══
+      - name: Sync Strava
         run: |
-          python3 - << 'EOF'
-          import sqlite3, sys
-          sys.path.insert(0, 'run_page')
-          from config import SQL_FILE
-          conn = sqlite3.connect(SQL_FILE)
-          cur = conn.cursor()
-          def secs_to_interval(secs):
-              h, rem = divmod(int(secs), 3600)
-              m, s = divmod(rem, 60)
-              return f"1970-01-01 {h:02d}:{m:02d}:{s:02d}.000000"
-          cur.execute("SELECT elapsed_time, moving_time FROM activities WHERE run_id=1196979659")
-          row = cur.fetchone()
-          if row and isinstance(row[0], int):
-              elapsed = secs_to_interval(row[0])
-              moving = secs_to_interval(row[1])
-              cur.execute("UPDATE activities SET elapsed_time=?, moving_time=? WHERE run_id=1196979659", (elapsed, moving))
-              conn.commit()
-              print(f"Fixed run_id=1196979659: elapsed={elapsed}, moving={moving}")
-          else:
-              print("Already fixed or record not found")
-          EOF
+          python run_page/strava_sync.py \
+            ${{ secrets.STRAVA_CLIENT_ID }} \
+            ${{ secrets.STRAVA_CLIENT_SECRET }} \
+            ${{ secrets.STRAVA_CLIENT_REFRESH_TOKEN }} \
+            --only-run
 
-      # 修复：生成 grid.svg（原来有用 --gpx-dir，现在改用 --from-db 避免路径问题）
-      - name: Generate grid.svg
+      # ═══ Step 2: Generate Custom SVGs ═══
+      - name: Generate Track Wall SVGs
+        run: python run_page/gen_trackwall.py
+
+      - name: Generate Heatmap SVGs
+        run: python run_page/gen_heatmap.py
+
+      - name: Generate Running Life SVG
+        run: python run_page/gen_runlife.py
+
+      # ═══ Step 3: Generate Original SVGs (GitHub profile etc.) ═══
+      - name: Generate GitHub-style SVGs
         run: |
-          python run_page/gen_svg.py \
-            --title "${{ env.TITLE_GRID }}" \
-            --type grid \
-            --athlete "${{ env.ATHLETE }}" \
-            --output assets/grid.svg \
-            --min-distance ${{ env.MIN_GRID_DISTANCE }} \
-            --track-color blue \
-            --special-distance 10 \
-            --special-color yellow \
-            --special-distance2 20 \
-            --special-color2 red \
-            --use-localtime \
-            --from-db
+          python run_page/gen_svg.py --from-db --title "$TITLE" --type github --athlete "$ATHLETE" --special-distance 10 --special-distance2 20 --special-color yellow --special-color2 red --output assets/github.svg --use-localtime --min-distance 0.5
+          python run_page/gen_svg.py --from-db --title "$TITLE_GRID" --type grid --athlete "$ATHLETE" --output assets/grid.svg --use-localtime --min-distance "$MIN_GRID_DISTANCE"
+          python run_page/gen_svg.py --from-db --type circular --use-localtime
 
-      # 修复：生成 github.svg（之前 workflow 里完全遗漏了这个！）
-      - name: Generate github.svg
+      # ═══ Step 4: Build Frontend ═══
+      - name: Build frontend
+        run: pnpm build
+
+      # ═══ Step 5: Push changes back ═══
+      - name: Push new data
         run: |
-          python run_page/gen_svg.py \
-            --title "${{ env.TITLE_GITHUB }}" \
-            --type github \
-            --athlete "${{ env.ATHLETE }}" \
-            --special-distance 10 \
-            --special-distance2 20 \
-            --special-color yellow \
-            --special-color2 red \
-            --output assets/github.svg \
-            --use-localtime \
-            --min-distance 0.5 \
-            --from-db
-
-      - name: Commit and push changes
-        id: commit
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/github.svg assets/grid.svg src/static/activities.json run_page/data.db
-          if git diff --cached --quiet; then
-            echo "commit_needed=false" >> $GITHUB_OUTPUT
-            echo "No changes to commit"
-          else
-            echo "commit_needed=true" >> $GITHUB_OUTPUT
-            git commit -m "feat: sync running data and regenerate SVGs $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            git push
-          fi
-
-  # 构建部署独立 job，等 push 完成后再跑（workflow_call 是同步的，会在 push 之前执行，故不能放在同一个 job）
-  build-and-deploy:
-    needs: sync
-    if: needs.sync.outputs.commit_needed == 'true'
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    uses: ./.github/workflows/gh-pages.yml
-    with:
-      save_data_in_github_cache: false
-      data_cache_prefix: track_data
+          git config --local user.email 'action@github.com'
+          git config --local user.name 'GitHub Action'
+          git add .
+          git commit -m 'update new runs [skip ci]' || echo 'nothing to commit'
+          git push || echo 'nothing to push'
