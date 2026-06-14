@@ -4,30 +4,16 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'   # 每天 UTC 0:00 (北京时间 8:00)
-  push:
-    branches:
-      - master
-    paths:
-      - run_page/strava_sync.py
-      - run_page/gen_svg.py
-      - run_page/gen_trackwall.py
-      - run_page/gen_heatmap.py
-      - run_page/gen_runlife.py
-      - requirements.txt
 
 env:
-  RUN_TYPE: strava
   ATHLETE: 荆轲
   TITLE: 荆轲 Running
   TITLE_GRID: Over 10km Runs
   MIN_GRID_DISTANCE: 10
-  BUILD_GH_PAGES: false
-  GENERATE_MONTH_OF_LIFE: false
-  SAVE_DATA_IN_GITHUB_CACHE: false
 
 jobs:
   sync:
-    name: Sync & Build
+    name: Sync Data & Generate SVGs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -45,20 +31,6 @@ jobs:
 
       - name: Install Python dependencies
         run: pip install -r requirements.txt
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 8
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: pnpm
-
-      - name: Install Node dependencies
-        run: pnpm install
 
       # ═══ Step 1: Sync Strava Data ═══
       - name: Sync Strava
@@ -78,22 +50,11 @@ jobs:
       - name: Generate Running Life SVG
         run: python run_page/gen_runlife.py
 
-      # ═══ Step 3: Generate Original SVGs (GitHub profile etc.) ═══
-      - name: Generate GitHub-style SVGs
-        run: |
-          python run_page/gen_svg.py --from-db --title "$TITLE" --type github --athlete "$ATHLETE" --special-distance 10 --special-distance2 20 --special-color yellow --special-color2 red --output assets/github.svg --use-localtime --min-distance 0.5
-          python run_page/gen_svg.py --from-db --title "$TITLE_GRID" --type grid --athlete "$ATHLETE" --output assets/grid.svg --use-localtime --min-distance "$MIN_GRID_DISTANCE"
-          python run_page/gen_svg.py --from-db --type circular --use-localtime
-
-      # ═══ Step 4: Build Frontend ═══
-      - name: Build frontend
-        run: pnpm build
-
-      # ═══ Step 5: Push changes back ═══
+      # ═══ Step 3: Push changes (triggers gh-pages deploy) ═══
       - name: Push new data
         run: |
           git config --local user.email 'action@github.com'
           git config --local user.name 'GitHub Action'
           git add .
-          git commit -m 'update new runs [skip ci]' || echo 'nothing to commit'
+          git commit -m 'update new runs' || echo 'nothing to commit'
           git push || echo 'nothing to push'
