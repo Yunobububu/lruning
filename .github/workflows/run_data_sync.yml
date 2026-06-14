@@ -62,12 +62,11 @@ jobs:
 
       # ═══ Step 1: Sync Strava Data ═══
       - name: Sync Strava
-        run: |
-          python run_page/strava_sync.py \
-            ${{ secrets.STRAVA_CLIENT_ID }} \
-            ${{ secrets.STRAVA_CLIENT_SECRET }} \
-            ${{ secrets.STRAVA_CLIENT_REFRESH_TOKEN }} \
-            --only-run
+        env:
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+          STRAVA_CLIENT_REFRESH_TOKEN: ${{ secrets.STRAVA_CLIENT_REFRESH_TOKEN }}
+        run: python run_page/strava_sync.py "$STRAVA_CLIENT_ID" "$STRAVA_CLIENT_SECRET" "$STRAVA_CLIENT_REFRESH_TOKEN" --only-run
 
       # ═══ Step 2: Generate Custom SVGs ═══
       - name: Generate Track Wall SVGs
