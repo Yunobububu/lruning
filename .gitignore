@@ -31,3 +31,4 @@ PNG_OUT/
 
 # Mac
 .DS_Store
+scripts/update.sh
