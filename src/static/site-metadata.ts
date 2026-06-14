@@ -22,23 +22,23 @@ const data: ISiteMetadataResult = {
   navLinks: [
     {
       name: '首页',
-      url: `${getBasePath()}/`,
+      url: '/',
     },
     {
       name: '轨迹墙',
-      url: `${getBasePath()}/tracks`,
+      url: '/tracks',
     },
     {
       name: '热力图',
-      url: `${getBasePath()}/heatmap`,
+      url: '/heatmap',
     },
     {
       name: '奔跑人生',
-      url: `${getBasePath()}/runlife`,
+      url: '/runlife',
     },
     {
       name: '赛事记录',
-      url: `${getBasePath()}/races`,
+      url: '/races',
     },
   ],
 };
