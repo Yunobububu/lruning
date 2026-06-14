@@ -53,7 +53,7 @@ const routes = createBrowserRouter(
       element: withOptionalGAPageTracking(<NotFound />),
     },
   ],
-  { basename: '/' }
+  { basename: import.meta.env.BASE_URL }
 );
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
