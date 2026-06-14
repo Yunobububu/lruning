@@ -12,8 +12,9 @@ interface Race {
 }
 
 const races: Race[] = racesData.races.map(r => {
+  const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
   const prefix = (path: string | undefined) =>
-    path?.startsWith('/') ? import.meta.env.BASE_URL + path.slice(1) : path;
+    path?.startsWith('/') ? baseUrl + path.slice(1) : path;
   return {
     ...r,
     certImg: prefix(r.certImg),

@@ -62,7 +62,7 @@ const YearHeatmap = ({ year, activities, raceDateMap }: { year: string; activiti
         <button
           onClick={() => {
             const a = document.createElement('a');
-            a.href = `${import.meta.env.BASE_URL}heatmaps/heatmap-${year}.svg`;
+            a.href = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/heatmaps/heatmap-${year}.svg`;
             a.download = `heatmap-${year}.svg`;
             a.click();
           }}

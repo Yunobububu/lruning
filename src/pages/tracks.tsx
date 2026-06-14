@@ -113,7 +113,7 @@ const Tracks = () => {
 
   const handleDownload = () => {
     const a = document.createElement('a');
-    a.href = `${import.meta.env.BASE_URL}tracks/tracks-${selectedYear === 'Total' ? 'all' : selectedYear}.svg`;
+    a.href = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/tracks/tracks-${selectedYear === 'Total' ? 'all' : selectedYear}.svg`;
     a.download = `tracks-${selectedYear === 'Total' ? 'all' : selectedYear}.svg`;
     a.click();
   };
