@@ -1,12 +1,10 @@
 import {
   formatPace,
   titleForRun,
-  formatRunTime,
   Activity,
   RunIds,
 } from '@/utils/utils';
-import { SHOW_ELEVATION_GAIN } from '@/utils/const';
-import { M_TO_DIST, M_TO_ELEV } from '@/utils/utils';
+import { M_TO_DIST } from '@/utils/utils';
 import styles from './style.module.css';
 
 interface IRunRowProperties {
@@ -27,7 +25,6 @@ const RunRow = ({
   const distance = (run.distance / M_TO_DIST).toFixed(2);
   const paceParts = run.average_speed ? formatPace(run.average_speed) : null;
   const heartRate = run.average_heartrate;
-  const runTime = formatRunTime(run.moving_time);
   const handleClick = () => {
     if (runIndex === elementIndex) {
       setRunIndex(-1);
@@ -44,15 +41,12 @@ const RunRow = ({
       key={run.start_date_local}
       onClick={handleClick}
     >
+      <td className={styles.runDate}>{run.start_date_local.slice(0, 19)}</td>
       <td>{titleForRun(run)}</td>
-      <td>{distance}</td>
-      {SHOW_ELEVATION_GAIN && (
-        <td>{((run.elevation_gain ?? 0) * M_TO_ELEV).toFixed(1)}</td>
-      )}
-      {paceParts && <td>{paceParts}</td>}
-      <td>{heartRate && heartRate.toFixed(0)}</td>
-      <td>{runTime}</td>
-      <td className={styles.runDate}>{run.start_date_local}</td>
+      <td className={styles.metric}>{distance} km</td>
+      <td className={styles.metric}>{run.moving_time}</td>
+      <td className={styles.metric}>{paceParts || '-'}</td>
+      <td className={styles.metric}>{heartRate ? heartRate.toFixed(0) : '-'}</td>
     </tr>
   );
 };

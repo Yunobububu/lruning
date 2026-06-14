@@ -61,12 +61,14 @@ class GridDrawer(TracksDrawer):
         for line in project(tr.bbox(), size, offset, tr.polylines):
             distance1 = self.poster.special_distance["special_distance"]
             distance2 = self.poster.special_distance["special_distance2"]
-            has_special = distance1 < self.poster.m2u(tr.length) < distance2
-            color = self.color(self.poster.length_range_by_date, tr.length, has_special)
-            if self.poster.m2u(tr.length) >= distance2:
-                color = self.poster.colors.get("special2") or self.poster.colors.get(
-                    "special"
-                )
+            distance3 = self.poster.special_distance.get("special_distance3", 40.0)
+            d = self.poster.m2u(tr.length)
+            if d >= distance1 and d < distance2:
+                color = self.poster.colors.get("special")      # 蓝色 (5km ≤ d < 10km)
+            elif d >= distance2 and d < distance3:
+                color = self.poster.colors.get("special2")     # 黄色 (10km ≤ d < 20km)
+            else:
+                color = self.poster.colors.get("special3") or self.poster.colors.get("special2")  # 红色 / 紫色
             polyline = dr.polyline(
                 points=line,
                 stroke=color,

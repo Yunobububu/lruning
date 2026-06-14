@@ -1,0 +1,25 @@
+{
+  "races": [
+    {
+      "name": "2026上海黄浦半程马拉松",
+      "date": "2026-03-29",
+      "distance": 21097.5,
+      "category": "半程马拉松",
+      "chipTime": "01:53:23",
+      "pace": 322,
+      "isPB": true,
+      "city": "上海市黄浦区",
+      "bib": "D12592",
+      "story": "马年首半马",
+      "source": "chinaath",
+      "certImg": "/race/certImg.png",
+      "medalImg": "/race/medalImg.jpeg",
+      "photos": [],
+      "trackImg": "/race/trackImg.png",
+      "bibImg": "/race/bibImg.jpeg",
+      "gearImg": "/race/gearImg.jpeg",
+      "gearBagImg": "/race/gearBagImg.jpeg",
+      "finishBagImg": "/race/finishBagImg.jpeg"
+    }
+  ]
+}

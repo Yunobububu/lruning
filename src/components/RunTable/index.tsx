@@ -6,8 +6,6 @@ import {
   Activity,
   RunIds,
 } from '@/utils/utils';
-import { SHOW_ELEVATION_GAIN } from '@/utils/const';
-import { DIST_UNIT } from '@/utils/utils';
 
 import RunRow from './RunRow';
 import styles from './style.module.css';
@@ -22,6 +20,8 @@ interface IRunTableProperties {
 
 type SortFunc = (_a: Activity, _b: Activity) => number;
 
+const COLUMNS = ['DATE', 'NAME', 'DISTANCE', 'DURATION', 'PACE', 'HR'];
+
 const RunTable = ({
   runs,
   locateActivity,
@@ -31,47 +31,37 @@ const RunTable = ({
 }: IRunTableProperties) => {
   const [sortFuncInfo, setSortFuncInfo] = useState('');
 
-  // Memoize sort functions to prevent recreating them on every render
   const sortFunctions = useMemo(() => {
-    const sortKMFunc: SortFunc = (a, b) =>
-      sortFuncInfo === DIST_UNIT
+    const sortDistFunc: SortFunc = (a, b) =>
+      sortFuncInfo === 'DISTANCE'
         ? a.distance - b.distance
         : b.distance - a.distance;
-    const sortElevationGainFunc: SortFunc = (a, b) =>
-      sortFuncInfo === 'Elev'
-        ? (a.elevation_gain ?? 0) - (b.elevation_gain ?? 0)
-        : (b.elevation_gain ?? 0) - (a.elevation_gain ?? 0);
     const sortPaceFunc: SortFunc = (a, b) =>
-      sortFuncInfo === 'Pace'
+      sortFuncInfo === 'PACE'
         ? a.average_speed - b.average_speed
         : b.average_speed - a.average_speed;
-    const sortBPMFunc: SortFunc = (a, b) => {
-      return sortFuncInfo === 'BPM'
+    const sortHRFunc: SortFunc = (a, b) => {
+      return sortFuncInfo === 'HR'
         ? (a.average_heartrate ?? 0) - (b.average_heartrate ?? 0)
         : (b.average_heartrate ?? 0) - (a.average_heartrate ?? 0);
     };
-    const sortRunTimeFunc: SortFunc = (a, b) => {
+    const sortDurationFunc: SortFunc = (a, b) => {
       const aTotalSeconds = convertMovingTime2Sec(a.moving_time);
       const bTotalSeconds = convertMovingTime2Sec(b.moving_time);
-      return sortFuncInfo === 'Time'
+      return sortFuncInfo === 'DURATION'
         ? aTotalSeconds - bTotalSeconds
         : bTotalSeconds - aTotalSeconds;
     };
     const sortDateFuncClick =
-      sortFuncInfo === 'Date' ? sortDateFunc : sortDateFuncReverse;
+      sortFuncInfo === 'DATE' ? sortDateFunc : sortDateFuncReverse;
 
-    const sortFuncMap = new Map([
-      [DIST_UNIT, sortKMFunc],
-      ['Elev', sortElevationGainFunc],
-      ['Pace', sortPaceFunc],
-      ['BPM', sortBPMFunc],
-      ['Time', sortRunTimeFunc],
-      ['Date', sortDateFuncClick],
+    const sortFuncMap = new Map<string, SortFunc>([
+      ['DATE', sortDateFuncClick],
+      ['DISTANCE', sortDistFunc],
+      ['DURATION', sortDurationFunc],
+      ['PACE', sortPaceFunc],
+      ['HR', sortHRFunc],
     ]);
-
-    if (!SHOW_ELEVATION_GAIN) {
-      sortFuncMap.delete('Elev');
-    }
 
     return sortFuncMap;
   }, [sortFuncInfo]);
@@ -83,7 +73,9 @@ const RunTable = ({
 
       setRunIndex(-1);
       setSortFuncInfo(sortFuncInfo === funcName ? '' : funcName);
-      setActivity(runs.sort(f));
+      if (f) {
+        setActivity([...runs].sort(f));
+      }
     },
     [sortFunctions, sortFuncInfo, runs, setRunIndex, setActivity]
   );
@@ -93,10 +85,9 @@ const RunTable = ({
       <table className={styles.runTable} cellSpacing="0" cellPadding="0">
         <thead>
           <tr>
-            <th />
-            {Array.from(sortFunctions.keys()).map((k) => (
-              <th key={k} onClick={handleClick}>
-                {k}
+            {COLUMNS.map((col) => (
+              <th key={col} onClick={handleClick}>
+                {col}
               </th>
             ))}
           </tr>

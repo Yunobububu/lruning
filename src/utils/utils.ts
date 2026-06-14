@@ -399,11 +399,14 @@ const getBoundsForGeoData = (
   const viewState = new WebMercatorViewport({
     width: 800,
     height: 600,
-  }).fitBounds(cornersLongLat, { padding: 200 });
+  }).fitBounds(cornersLongLat, { padding: 80 });
   let { longitude, latitude, zoom } = viewState;
   if (features.length > 1) {
     zoom = 11.5;
   }
+  // shift center up slightly
+  const latSpan = Math.max(...pointsLat) - Math.min(...pointsLat);
+  latitude -= latSpan * 1.5;
   return { longitude, latitude, zoom };
 };
 

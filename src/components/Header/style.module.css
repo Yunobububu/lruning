@@ -1,27 +1,30 @@
-.themeButton {
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  position: relative;
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.themeButton:hover {
-  background-color: var(--color-run-row-hover-background);
+.navLink {
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.2s;
+  font-size: 14px;
+  font-weight: 500;
 }
 
-.themeButtonActive {
-  background-color: var(--color-run-row-hover-background);
+.navLink:hover {
+  color: rgba(255, 255, 255, 0.9);
 }
 
-.iconWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+.navLinkActive {
+  color: #E31937;
+}
+
+.navLinkActive:hover {
+  color: #E31937;
 }

@@ -65,7 +65,7 @@
 
 .lights {
   position: absolute;
-  margin-top: 62px;
+  top: 130px;
   right: 10px;
   opacity: 0.3;
   width: 29px;

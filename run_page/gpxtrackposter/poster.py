@@ -160,6 +160,7 @@ class Poster:
 
         special_distance1 = self.special_distance["special_distance"]
         special_distance2 = self.special_distance["special_distance2"]
+        special_distance3 = self.special_distance.get("special_distance3", 40.0)
 
         (
             total_length,
@@ -201,7 +202,7 @@ class Poster:
 
             d.add(
                 d.text(
-                    f"Over {special_distance1:.1f} {self.u()}",
+                    f"{special_distance1:.0f}-{special_distance2:.0f} {self.u()}",
                     insert=(70, self.height - 14.5),
                     fill=text_color,
                     style=small_value_style,
@@ -214,12 +215,25 @@ class Poster:
 
             d.add(
                 d.text(
-                    f"Over {special_distance2:.1f} {self.u()}",
+                    f"{special_distance2:.0f}-{special_distance3:.0f} {self.u()}",
                     insert=(70, self.height - 10.5),
                     fill=text_color,
                     style=small_value_style,
                 )
             )
+
+            if special_distance3:
+                d.add(
+                    d.rect((65, self.height - 9), (2.6, 2.6), fill=self.colors.get("special3", self.colors.get("special2")))
+                )
+                d.add(
+                    d.text(
+                        f">{special_distance3:.0f} {self.u()}",
+                        insert=(70, self.height - 6.5),
+                        fill=text_color,
+                        style=small_value_style,
+                    )
+                )
 
         d.add(
             d.text(

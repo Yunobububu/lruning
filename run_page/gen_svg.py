@@ -133,6 +133,13 @@ def main():
         help="Secondary color of special tracks (default: none).",
     )
     args_parser.add_argument(
+        "--special-color3",
+        dest="special_color3",
+        metavar="COLOR",
+        default="#9400D3",
+        help='Third tier special color (default: "#9400D3" purple).',
+    )
+    args_parser.add_argument(
         "--units",
         dest="units",
         metavar="UNITS",
@@ -159,7 +166,15 @@ def main():
         metavar="DISTANCE",
         type=float,
         default=20.0,
-        help="Special Distance2 by km and corlor with the special_color2",
+        help="Special Distance2 by km and color with the special_color2",
+    )
+    args_parser.add_argument(
+        "--special-distance3",
+        dest="special_distance3",
+        metavar="DISTANCE",
+        type=float,
+        default=40.0,
+        help="Third tier special distance in km (default: 40.0)",
     )
     args_parser.add_argument(
         "--min-distance",
@@ -255,6 +270,7 @@ def main():
     p.special_distance = {
         "special_distance": args.special_distance,
         "special_distance2": args.special_distance2,
+        "special_distance3": args.special_distance3,
     }
 
     p.colors = {
@@ -263,6 +279,7 @@ def main():
         "track2": args.track_color2 or args.track_color,
         "special": args.special_color,
         "special2": args.special_color2 or args.special_color,
+        "special3": args.special_color3,
         "text": args.text_color,
     }
     p.units = args.units

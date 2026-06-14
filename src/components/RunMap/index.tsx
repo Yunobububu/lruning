@@ -443,7 +443,6 @@ const RunMap = ({
           </a>
         </div>
       )}
-      <RunMapButtons changeYear={changeYear} thisYear={thisYear} />
       <Source id="data" type="geojson" data={combinedGeoData}>
         <Layer
           id="province"
@@ -523,12 +522,12 @@ const RunMap = ({
       )}
       <span className={styles.runTitle}>{title}</span>
       <FullscreenControl style={fullscreenButton} />
-      {!PRIVACY_MODE && <LightsControl setLights={setLights} lights={lights} />}
       <NavigationControl
         showCompass={false}
-        position={'bottom-right'}
-        style={{ opacity: 0.3 }}
+        position={'top-right'}
+        style={{ opacity: 0.3, marginTop: '64px' }}
       />
+      {!PRIVACY_MODE && <LightsControl setLights={setLights} lights={lights} />}
     </Map>
   );
 };

@@ -15,22 +15,30 @@ const getBasePath = () => {
 };
 
 const data: ISiteMetadataResult = {
-  siteTitle: 'Running Page',
-  siteUrl: 'https://lyuiii.run',
-  logo: 'https://pic.rmb.bdstatic.com/bjh/events/d311c1d1c8648d6f3c3867495123d66b2924.png@h_1280',
-  description: 'Personal site and blog',
+  siteTitle: 'L.RUN',
+  siteUrl: `${getBasePath()}/`,
+  logo: '',
+  description: 'Running dashboard — track every km',
   navLinks: [
     {
-      name: 'Summary',
-      url: `${getBasePath()}/summary`,
+      name: '首页',
+      url: `${getBasePath()}/`,
     },
     {
-      name: 'Blog',
-      url: 'https://github.com/yihong0618/gitblog',
+      name: '轨迹墙',
+      url: `${getBasePath()}/tracks`,
     },
     {
-      name: 'About',
-      url: 'https://github.com/yihong0618/running_page/blob/master/README-CN.md',
+      name: '热力图',
+      url: `${getBasePath()}/heatmap`,
+    },
+    {
+      name: '奔跑人生',
+      url: `${getBasePath()}/runlife`,
+    },
+    {
+      name: '赛事记录',
+      url: `${getBasePath()}/races`,
     },
   ],
 };
