@@ -61,7 +61,7 @@ jobs:
           git push || echo 'nothing to push'
 
   publish_github_pages:
-    if: needs.sync.result == 'success' && env.BUILD_GH_PAGES == 'true'
+    if: needs.sync.result == 'success'
     name: Build and publish GitHub Pages
     uses: ./.github/workflows/gh-pages.yml
     with:
