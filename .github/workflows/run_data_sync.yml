@@ -10,6 +10,7 @@ env:
   TITLE: 荆轲 Running
   TITLE_GRID: Over 10km Runs
   MIN_GRID_DISTANCE: 10
+  BUILD_GH_PAGES: true
 
 jobs:
   sync:
@@ -50,7 +51,7 @@ jobs:
       - name: Generate Running Life SVG
         run: python run_page/gen_runlife.py
 
-      # ═══ Step 3: Push changes (triggers gh-pages deploy) ═══
+      # ═══ Step 3: Push changes ═══
       - name: Push new data
         run: |
           git config --local user.email 'action@github.com'
@@ -58,3 +59,13 @@ jobs:
           git add .
           git commit -m 'update new runs' || echo 'nothing to commit'
           git push || echo 'nothing to push'
+
+  publish_github_pages:
+    if: needs.sync.result == 'success' && env.BUILD_GH_PAGES == 'true'
+    name: Build and publish GitHub Pages
+    uses: ./.github/workflows/gh-pages.yml
+    with:
+      save_data_in_github_cache: false
+      data_cache_prefix: 'track_data'
+    needs:
+      - sync
