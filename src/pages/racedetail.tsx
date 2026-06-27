@@ -9,6 +9,7 @@ interface Race {
   certImg?: string; medalImg?: string; photos?: string[];
   trackImg?: string; bibImg?: string;
   gearImg?: string; gearBagImg?: string; finishBagImg?: string;
+  video?: string;
 }
 
 const races: Race[] = racesData.races.map(r => {
@@ -134,6 +135,14 @@ const RaceDetail = () => {
                 <img key={i} src={p} alt={`Photo ${i + 1}`} className="rounded-xl w-full object-cover aspect-square" />
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Video */}
+        {race.video && (
+          <div className="mb-10">
+            <h3 className="text-sm font-bold text-zinc-400 uppercase mb-4">参赛视频</h3>
+            <video src={race.video} controls className="rounded-xl max-w-lg w-full" />
           </div>
         )}
 
