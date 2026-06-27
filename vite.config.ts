@@ -32,6 +32,7 @@ export default defineConfig({
     viteTsconfigPaths(),
     svgr({
       include: ['**/*.svg'],
+      exclude: ['public/**/*.svg'],
       svgrOptions: {
         exportType: 'named',
         namedExport: 'ReactComponent',
