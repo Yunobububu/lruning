@@ -31,8 +31,7 @@ export default defineConfig({
     tailwindcss(),
     viteTsconfigPaths(),
     svgr({
-      include: ['**/*.svg'],
-      exclude: ['public/**/*.svg'],
+      include: ['src/**/*.svg'],
       svgrOptions: {
         exportType: 'named',
         namedExport: 'ReactComponent',
