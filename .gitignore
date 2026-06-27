@@ -1,19 +1,10 @@
 # Data files (large)
 GPX_OUT/
-run_page/data.db
 run_page/data.db-shm
 run_page/data.db-wal
 *.gpx
 *.tcx
 *.fit
-
-# Generated SVGs
-public/tracks/*.svg
-public/heatmaps/*.svg
-public/running-life.svg
-
-# Race images (downloaded)
-public/race/
 
 # Build output
 dist/
