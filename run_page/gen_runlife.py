@@ -48,9 +48,8 @@ def generate_runlife(data_path, output_path):
 
     # Title + stats above grid (like collapsed overlay position)
     cx = W / 2
-    dwg.add(dwg.text('RUNNING.LIFE', insert=(cx, TITLE_H/2 - 4), fill='white', font_size=22, font_family='sans-serif', font_weight='bold', font_style='italic', text_anchor='middle'))
-    # Make .LIFE red by overlay
-    dwg.add(dwg.text('.LIFE', insert=(cx + 78, TITLE_H/2 - 4), fill='#E31937', font_size=22, font_family='sans-serif', font_weight='bold', font_style='italic'))
+    dwg.add(dwg.text('RUNNING', insert=(cx - 22, TITLE_H/2 - 4), fill='white', font_size=22, font_family='sans-serif', font_weight='bold', font_style='italic', text_anchor='middle'))
+    dwg.add(dwg.text('.LIFE', insert=(cx + 32, TITLE_H/2 - 4), fill='#E31937', font_size=22, font_family='sans-serif', font_weight='bold', font_style='italic', text_anchor='middle'))
     pct = f"{(active / TOTAL_MONTHS * 100):.1f}"
     dwg.add(dwg.text(f'{active} / {TOTAL_MONTHS} months · {pct}%', insert=(cx, TITLE_H/2 + 16), fill='#a0a0a0', font_size=13, font_family='sans-serif', text_anchor='middle'))
 
