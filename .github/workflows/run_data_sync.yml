@@ -9,7 +9,6 @@ on:
       - master
     paths:
       - '.github/workflows/run_data_sync.yml'
-      - '.github/workflows/gh-pages.yml'
       - 'run_page/strava_sync.py'
       - 'requirements.txt'
 
