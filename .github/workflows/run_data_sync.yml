@@ -4,6 +4,14 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'   # 每天 UTC 0:00 (北京时间 8:00)
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/run_data_sync.yml'
+      - '.github/workflows/gh-pages.yml'
+      - 'run_page/strava_sync.py'
+      - 'requirements.txt'
 
 env:
   ATHLETE: 荆轲
