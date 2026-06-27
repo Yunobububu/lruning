@@ -1,8 +1,6 @@
 # Data files (large)
-GPX_OUT/
 run_page/data.db-shm
 run_page/data.db-wal
-*.gpx
 *.tcx
 *.fit
 
