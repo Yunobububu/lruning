@@ -72,5 +72,8 @@ jobs:
     if: needs.sync.result == 'success'
     name: Build and publish GitHub Pages
     uses: ./.github/workflows/gh-pages.yml
+    permissions:
+      pages: write
+      id-token: write
     needs:
       - sync
