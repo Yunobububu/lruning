@@ -53,6 +53,8 @@ jobs:
       - name: Build
         env:
           REPO_NAME: ${{ github.event.repository.name }}
+          VITE_IMG_BASE_URL: ${{ secrets.IMG_BASE_URL }}
+          VITE_FILE_BASE_URL: ${{ secrets.FILE_BASE_URL }}
         run: PATH_PREFIX=/$REPO_NAME pnpm build
 
       - name: Upload artifact

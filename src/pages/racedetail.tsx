@@ -14,8 +14,16 @@ interface Race {
 
 const races: Race[] = racesData.races.map(r => {
   const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
-  const prefix = (path: string | undefined) =>
-    path?.startsWith('/') ? baseUrl + path.slice(1) : path;
+  const imgBase = import.meta.env.VITE_IMG_BASE_URL || '';
+  const fileBase = import.meta.env.VITE_FILE_BASE_URL || '';
+  const prefix = (path: string | undefined) => {
+    if (!path) return path;
+    if (path.startsWith('/changzheng/')) {
+      if (path.endsWith('.mp4')) return fileBase + path;
+      return imgBase + path;
+    }
+    return path.startsWith('/') ? baseUrl + path.slice(1) : path;
+  };
   return {
     ...r,
     certImg: prefix(r.certImg),
