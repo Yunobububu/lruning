@@ -13,6 +13,9 @@ on:
       - 'run_page/strava_sync.py'
       - 'requirements.txt'
 
+permissions:
+  contents: write
+
 env:
   ATHLETE: 荆轲
   TITLE: 荆轲 Running
