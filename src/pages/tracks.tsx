@@ -128,14 +128,14 @@ const Tracks = () => {
 
   return (
     <Layout>
-      <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8 lg:pt-12">
-        <div className="flex gap-8">
+      <div className="mx-auto max-w-7xl px-2 sm:px-4 py-4 lg:px-8 lg:pt-12">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
           {/* LEFT COLUMN */}
-          <div className="w-72 shrink-0 space-y-3">
-            {/* Total card */}
+          <div className="w-full lg:w-72 shrink-0 space-y-2 lg:space-y-3 order-2 lg:order-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2 lg:space-y-3">            
             <div
               onClick={() => setSelectedYear('Total')}
-              className={`rounded-2xl bg-[#111] p-4 cursor-pointer transition border ${selectedYear === 'Total' ? 'border-accent' : 'border-zinc-800 hover:border-zinc-600'}`}
+              className={`rounded-2xl bg-[#111] p-3 lg:p-4 cursor-pointer transition border ${selectedYear === 'Total' ? 'border-accent' : 'border-zinc-800 hover:border-zinc-600'}`}
             >
               <YearCard year="Total" runs={activities as Activity[]} active={selectedYear === 'Total'} onClick={() => setSelectedYear('Total')} />
             </div>
@@ -148,10 +148,11 @@ const Tracks = () => {
                 onClick={() => setSelectedYear(year)}
               />
             ))}
+            </div>
           </div>
 
           {/* RIGHT COLUMN */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 order-1 lg:order-2">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-white italic">
                 荆轲's{selectedYear !== 'Total' ? ` ${selectedYear}` : ''} Run

@@ -1,63 +1,76 @@
-/* Mobile-specific improvements for running page */
+/* Mobile-specific improvements for L.RUN */
 
 @media only screen and (max-width: 768px) {
-  /* Prevent horizontal overflow on the main container */
-  .mobile-map-container {
-    margin-bottom: 1rem;
-    max-width: 100%;
-    overflow: hidden;
-  }
-
-  /* Ensure body doesn't require horizontal scrolling */
   body {
     overflow-x: hidden;
     max-width: 100vw;
   }
 
-  /* Make main content areas mobile-friendly */
-  .lg\:w-1\/3,
-  .lg\:w-2\/3 {
+  /* Navigation */
+  nav a {
+    font-size: 0.8rem !important;
+    padding: 0 0.5rem !important;
+  }
+
+  /* Home page */
+  .runTable {
+    font-size: 0.75rem !important;
+  }
+  .runTable th,
+  .runTable td {
+    padding: 0.3rem 0.5rem !important;
+  }
+
+  /* Year goal card */
+  .lg\\:w-1\\/3,
+  .lg\\:w-2\\/3 {
     width: 100% !important;
-    max-width: 100%;
   }
 
-  /* Improve spacing on mobile */
-  .lg\:p-16 {
-    padding: 1rem !important;
+  /* Reduce paddings */
+  .lg\\:px-8 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  .lg\\:pt-12 {
+    padding-top: 1rem !important;
   }
 
-  /* Reduce title size on mobile */
+  /* Race detail images */
+  img.rounded-xl {
+    max-width: 100% !important;
+  }
+
+  /* Heatmap legend */
+  .space-x-4 {
+    gap: 0.5rem !important;
+  }
+
+  /* Mini route grid */
+  .grid-cols-12 {
+    grid-template-columns: repeat(8, 1fr) !important;
+  }
+
+  /* Typography */
+  .text-3xl, .lg\\:text-4xl {
+    font-size: 1.5rem !important;
+  }
   .text-5xl {
-    font-size: 2.5rem !important;
-  }
-
-  /* Optimize margin for mobile */
-  .my-12 {
-    margin-top: 2rem !important;
-    margin-bottom: 2rem !important;
-  }
-
-  .mt-6 {
-    margin-top: 1rem !important;
+    font-size: 2rem !important;
   }
 }
 
-/* Additional mobile table improvements */
 @media only screen and (max-width: 480px) {
-  /* For very small screens, make table even more compact */
   .runTable {
-    min-width: 550px !important;
-    font-size: 0.75rem !important;
+    font-size: 0.7rem !important;
   }
 
-  .runTable th,
-  .runTable td {
-    padding: 0.2rem !important;
-    min-width: 50px !important;
+  .grid-cols-12 {
+    grid-template-columns: repeat(6, 1fr) !important;
   }
 
-  .runTable th:first-child,
-  .runTable td:first-child {
-    min-width: 90px !important;
+  /* Smaller stats text */
+  .text-lg {
+    font-size: 1rem !important;
   }
 }
