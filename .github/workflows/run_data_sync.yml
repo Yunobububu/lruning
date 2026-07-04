@@ -71,6 +71,7 @@ jobs:
             echo 'nothing to commit'
           else
             git commit -m 'update new runs'
+            git pull --rebase
             git push
           fi
 
