@@ -4,13 +4,6 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'   # 每天 UTC 0:00 (北京时间 8:00)
-  push:
-    branches:
-      - master
-    paths:
-      - '.github/workflows/run_data_sync.yml'
-      - 'run_page/strava_sync.py'
-      - 'requirements.txt'
 
 permissions:
   contents: write
