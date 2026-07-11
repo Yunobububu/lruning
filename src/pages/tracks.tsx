@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { motion } from 'motion/react';
 import Layout from '@/components/Layout';
 import useActivities from '@/hooks/useActivities';
 import { Activity, formatPace } from '@/utils/utils';
@@ -60,7 +61,7 @@ const YearCard = ({ year, runs, active, onClick }: { year: string; runs: Activit
   return (
     <div
       onClick={onClick}
-      className={`rounded-2xl bg-[#111] p-4 cursor-pointer transition border ${active ? 'border-accent' : 'border-zinc-800 hover:border-zinc-600'}`}
+      className={`rounded-2xl glass-card p-4 cursor-pointer transition shadow-card ${active ? 'border-accent' : 'border-transparent hover:border-white/10'}`}
     >
       <div className="flex items-center justify-between mb-2">
         <span className={`text-lg font-bold ${active ? 'text-accent' : 'text-white'}`}>{year}</span>
@@ -131,11 +132,16 @@ const Tracks = () => {
       <div className="mx-auto max-w-7xl px-2 sm:px-4 py-4 lg:px-8 lg:pt-12">
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
           {/* LEFT COLUMN */}
-          <div className="w-full lg:w-72 shrink-0 space-y-2 lg:space-y-3 order-2 lg:order-1">
+          <motion.div
+            className="w-full lg:w-72 shrink-0 space-y-2 lg:space-y-3 order-2 lg:order-1"
+            initial="hidden"
+            animate="show"
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.03, delayChildren: 0.05 } } }}
+          >
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2 lg:space-y-3">            
             <div
               onClick={() => setSelectedYear('Total')}
-              className={`rounded-2xl bg-[#111] p-3 lg:p-4 cursor-pointer transition border ${selectedYear === 'Total' ? 'border-accent' : 'border-zinc-800 hover:border-zinc-600'}`}
+              className={`rounded-2xl glass-card p-3 lg:p-4 cursor-pointer transition shadow-card ${selectedYear === 'Total' ? 'border-accent' : 'border-transparent hover:border-white/10'}`}
             >
               <YearCard year="Total" runs={activities as Activity[]} active={selectedYear === 'Total'} onClick={() => setSelectedYear('Total')} />
             </div>
@@ -149,10 +155,15 @@ const Tracks = () => {
               />
             ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* RIGHT COLUMN */}
-          <div className="flex-1 min-w-0 order-1 lg:order-2">
+          <motion.div
+            className="flex-1 min-w-0 order-1 lg:order-2"
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.15, delay: 0.05 }}
+          >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-white italic">
                 荆轲's{selectedYear !== 'Total' ? ` ${selectedYear}` : ''} Run
@@ -204,7 +215,7 @@ const Tracks = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </Layout>

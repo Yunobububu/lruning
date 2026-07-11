@@ -1,10 +1,25 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'motion/react';
 import Header from '@/components/Header';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
 
+const pageVariants = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: { duration: 0.15 },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.1 },
+  },
+};
+
 const Layout = ({ children }: React.PropsWithChildren) => {
   const { siteTitle, description } = useSiteMetadata();
+  const location = useLocation();
 
   return (
     <>
@@ -19,7 +34,18 @@ const Layout = ({ children }: React.PropsWithChildren) => {
         />
       </Helmet>
       <Header />
-      <main className="min-h-screen pt-14">{children}</main>
+      <AnimatePresence mode="wait">
+        <motion.main
+          key={location.pathname}
+          variants={pageVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          className="min-h-screen pt-14"
+        >
+          {children}
+        </motion.main>
+      </AnimatePresence>
     </>
   );
 };

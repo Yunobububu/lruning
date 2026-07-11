@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import Layout from '@/components/Layout';
 import useActivities from '@/hooks/useActivities';
 import racesData from '@/static/races.json';
@@ -56,7 +57,12 @@ const YearHeatmap = ({ year, activities, raceDateMap }: { year: string; activiti
   }, [activities, year, raceDateMap]);
 
   return (
-    <div className="shrink-0 rounded-2xl border border-zinc-800 bg-[#111] p-4 group">
+    <motion.div
+      className="shrink-0 rounded-2xl glass-card p-4 group shadow-card"
+      initial={{ opacity: 0, y: 4 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.15 }}
+    >
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-lg font-bold text-white">{year}</h3>
         <button
@@ -114,7 +120,7 @@ const YearHeatmap = ({ year, activities, raceDateMap }: { year: string; activiti
           </div>
         </div>
       ))}
-    </div>
+    </motion.div>
   );
 };
 

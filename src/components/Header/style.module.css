@@ -4,27 +4,38 @@
   left: 0;
   right: 0;
   z-index: 50;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  /* Material edge — light catching on top */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  /* Contextual shadow when scrolled */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 .navLink {
   color: rgba(255, 255, 255, 0.5);
-  transition: color 0.2s;
   font-size: 14px;
   font-weight: 500;
+  position: relative;
+  transition: color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .navLink:hover {
   color: rgba(255, 255, 255, 0.9);
 }
 
+/* Active state — indicator handled by motion.div */
 .navLinkActive {
   color: #E31937;
 }
 
 .navLinkActive:hover {
   color: #E31937;
+}
+
+/* Press feedback on nav links */
+.navLink:active {
+  transform: scale(0.95);
+  transition: transform 0.08s ease-out;
 }

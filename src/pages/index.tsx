@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback, useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { Helmet } from 'react-helmet-async';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { motion } from 'motion/react';
 import Layout from '@/components/Layout';
 import { Link } from 'react-router-dom';
 import RunMap from '@/components/RunMap';
@@ -43,6 +44,18 @@ const fmtHours = (sec: number) => {
 const nowYear = String(new Date().getFullYear());
 const nowMonth = String(new Date().getMonth() + 1).padStart(2, '0');
 
+/* ── staggered animation variants ──────────────── */
+
+const containerStagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.03, delayChildren: 0.03 } },
+};
+
+const fadeUpItem = {
+  hidden: { opacity: 0, y: 4 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.15 } },
+};
+
 /* ── stat card component ──────────────────────── */
 
 const StatCard = ({
@@ -66,7 +79,7 @@ const StatCard = ({
 }) => {
   const pct = goal ? Math.min(100, (parseFloat(value) / goal) * 100) : 0;
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-[#111] p-5 sm:p-6">
+    <div className="rounded-2xl glass-card p-5 sm:p-6 glass-card-interactive shadow-card">
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
         {label}
       </p>
@@ -190,12 +203,12 @@ const CalendarWidget = ({
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-[#111] p-5">
+    <div className="rounded-2xl glass-card p-5 shadow-card">
       {/* Header: arrows + icons on left, month/year km on right */}
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-1">
-          <button onClick={onPrevMonth} className="text-zinc-400 hover:text-white text-lg leading-none px-1">&#8249;</button>
-          <button onClick={onNextMonth} className="text-zinc-400 hover:text-white text-lg leading-none px-1">&#8250;</button>
+          <button onClick={onPrevMonth} className="btn-press text-zinc-400 hover:text-white text-lg leading-none px-1">&#8249;</button>
+          <button onClick={onNextMonth} className="btn-press text-zinc-400 hover:text-white text-lg leading-none px-1">&#8250;</button>
           <button
             onClick={onToggleView}
             title="Calendar view"
@@ -513,48 +526,59 @@ const Index = () => {
 
       <div className="mx-auto max-w-7xl px-4 pt-8 lg:px-8 lg:pt-12">
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-5 items-stretch">
           {/* ── LEFT COLUMN ────────────────────── */}
           <div className="lg:col-span-3 flex flex-col">
-            {/* Stats cards */}
-            <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Link to="/tracks" className="group relative block rounded-2xl border border-zinc-800 hover:border-red-500 transition-colors overflow-hidden">
+            {/* Stats cards — staggered entrance */}
+            <motion.div
+              className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3"
+              variants={containerStagger}
+              initial="hidden"
+              animate="show"
+            >
+              <motion.div variants={fadeUpItem}>
+                <Link to="/tracks" className="group relative block rounded-2xl overflow-hidden shadow-lift">
+                  <StatCard
+                    label="TOTAL DISTANCE"
+                    value={totalKm}
+                    unit="km"
+                    subLeft={`⚡ ${totalRuns} runs`}
+                    subRight={`🕒 ${totalHours}`}
+                    twoLines
+                  />
+                  <div className="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl">
+                    <span className="text-white text-lg font-medium border-b-2 border-red-500 pb-0.5">
+                      点击打开轨迹墙
+                    </span>
+                  </div>
+                </Link>
+              </motion.div>
+              <motion.div variants={fadeUpItem}>
                 <StatCard
-                  label="TOTAL DISTANCE"
-                  value={totalKm}
-                  unit="km"
-                  subLeft={`⚡ ${totalRuns} runs`}
-                  subRight={`🕒 ${totalHours}`}
-                  twoLines
+                  label="YEARLY GOAL"
+                  value={thisYearKm}
+                  unit="/ 1000 km"
+                  goal={1000}
+                  subLeft={`${thisYearCount} runs`}
+                  subRight={thisYearHours}
+                  vs={yearVsLastYear}
                 />
-                <div className="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl">
-                  <span className="text-white text-lg font-medium border-b-2 border-red-500 pb-0.5">
-                    点击打开轨迹墙
-                  </span>
-                </div>
-              </Link>
-              <StatCard
-                label="YEARLY GOAL"
-                value={thisYearKm}
-                unit="/ 1000 km"
-                goal={1000}
-                subLeft={`${thisYearCount} runs`}
-                subRight={thisYearHours}
-                vs={yearVsLastYear}
-              />
-              <StatCard
-                label="MONTHLY GOAL"
-                value={thisMonthKm}
-                unit="/ 150 km"
-                goal={150}
-                subLeft={`${thisMonthCount} runs`}
-                subRight={thisMonthHours}
-                vs={monthVsLastMonth}
-              />
-            </div>
+              </motion.div>
+              <motion.div variants={fadeUpItem}>
+                <StatCard
+                  label="MONTHLY GOAL"
+                  value={thisMonthKm}
+                  unit="/ 150 km"
+                  goal={150}
+                  subLeft={`${thisMonthCount} runs`}
+                  subRight={thisMonthHours}
+                  vs={monthVsLastMonth}
+                />
+              </motion.div>
+            </motion.div>
 
             {/* Activity Log */}
-            <div className="rounded-2xl border border-zinc-800 bg-[#111] p-5 mt-auto">
+            <div className="rounded-2xl glass-card p-5 mt-auto shadow-card">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-white">Activity Log</h2>
                 <span className="text-sm text-zinc-500">
@@ -566,20 +590,20 @@ const Index = () => {
               <div className="mb-4 flex flex-wrap gap-2">
                 <button
                   onClick={() => setYear('Total')}
-                  className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                  className={`btn-press rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-150 ${
                     year === 'Total'
-                      ? 'bg-accent text-white'
-                      : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                      ? 'bg-accent text-white shadow-sm shadow-accent/30'
+                      : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white'
                   }`}
                 >
                   All
                 </button>
                 <button
                   onClick={() => setYear(nowYear)}
-                  className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                  className={`btn-press rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-150 ${
                     year === nowYear
-                      ? 'bg-accent text-white'
-                      : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                      ? 'bg-accent text-white shadow-sm shadow-accent/30'
+                      : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white'
                   }`}
                 >
                   {nowYear}
@@ -589,12 +613,11 @@ const Index = () => {
                   .slice(0, 6)
                   .map((y) => (
                     <button
-                      key={y}
                       onClick={() => setYear(y)}
-                      className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                      className={`btn-press rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-150 ${
                         year === y
-                          ? 'bg-accent text-white'
-                          : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                          ? 'bg-accent text-white shadow-sm shadow-accent/30'
+                          : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white'
                       }`}
                     >
                       {y}
@@ -637,10 +660,16 @@ const Index = () => {
             </div>
           </div>
 
-          {/* ── RIGHT COLUMN ────────────────────── */}
-          <div className="lg:col-span-2 flex flex-col space-y-6">
+          {/* ── RIGHT COLUMN — staggered sections ── */}
+          <motion.div
+            className="lg:col-span-2 flex flex-col space-y-4"
+            variants={containerStagger}
+            initial="hidden"
+            animate="show"
+          >
             {/* Marathon Events */}
-            <div className="rounded-2xl border border-zinc-800 bg-[#111] p-5">
+            <motion.div variants={fadeUpItem}>
+            <div className="rounded-2xl glass-card p-5 glass-card-interactive shadow-card">
               <div className="flex items-stretch gap-0">
                 {/* Left: count + labels */}
                 <div className="flex items-center gap-3">
@@ -670,9 +699,11 @@ const Index = () => {
                 )}
               </div>
             </div>
+            </motion.div>
 
             {/* Map */}
-            <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-[#111]" id="map-container">
+            <motion.div variants={fadeUpItem}>
+            <div className="overflow-hidden rounded-2xl glass-card shadow-card" id="map-container">
               <div className="h-[340px]">
                 <RunMap
                   title=""
@@ -684,8 +715,10 @@ const Index = () => {
                 />
               </div>
             </div>
+            </motion.div>
 
             {/* Calendar */}
+            <motion.div variants={fadeUpItem}>
             <CalendarWidget
               year={calendarYear}
               month={calendarMonth}
@@ -698,14 +731,16 @@ const Index = () => {
               onSelectDate={setSelectedDate}
               monthKm={calendarMonthKm}
             />
+            </motion.div>
 
             {/* Monthly Distance Chart */}
-            <div className="rounded-2xl border border-zinc-800 bg-[#111] p-5 mt-auto">
-              <div className="mb-3 flex items-center justify-between">
-                <h3 className="text-base font-bold text-white">Monthly Distance</h3>
-                <span className="text-sm text-zinc-500">{year}</span>
+            <motion.div variants={fadeUpItem} className="mt-auto">
+            <div className="rounded-2xl glass-card p-4 shadow-card">
+              <div className="mb-2 flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white">Monthly Distance</h3>
+                <span className="text-xs text-zinc-500">{year}</span>
               </div>
-              <ResponsiveContainer width="100%" height={180}>
+              <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={monthlyChartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                   <XAxis dataKey="month" tick={{ fill: '#71717a', fontSize: 11 }} />
@@ -722,7 +757,8 @@ const Index = () => {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
 

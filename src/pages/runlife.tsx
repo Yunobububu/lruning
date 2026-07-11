@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import Layout from '@/components/Layout';
 import useActivities from '@/hooks/useActivities';
 import { Activity } from '@/utils/utils';

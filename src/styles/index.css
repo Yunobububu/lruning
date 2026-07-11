@@ -12,12 +12,24 @@
   --color-surface: #1a1a1a;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  /* apple-design spring tokens */
+  --spring-damping-default: 0.7;
+  --spring-response-default: 0.3;
+  --spring-damping-snappy: 1.0;
+  --spring-response-snappy: 0.15;
 }
+
+/* ══════════════════════════════════════════════════
+   Apple Design — Base
+   ══════════════════════════════════════════════════ */
 
 :root {
   background-color: #000;
   color: rgba(255, 255, 255, 0.87);
   font-family: var(--font-sans);
+  font-optical-sizing: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 html, body {
@@ -28,14 +40,223 @@ html, body {
   padding: 0;
 }
 
+/* Subtle texture + light bleed so glass effect is visible */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    /* subtle grid */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(255, 255, 255, 0.008) 1px,
+      rgba(255, 255, 255, 0.008) 2px
+    ),
+    /* warm light bleed top-left */
+    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(227, 25, 55, 0.08), transparent 70%),
+    /* cool light bleed bottom-right */
+    radial-gradient(ellipse 50% 35% at 80% 85%, rgba(59, 130, 246, 0.05), transparent 70%);
+  pointer-events: none;
+}
+
+/* Noise overlay for grain texture through glass */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 256px;
+  pointer-events: none;
+}
+
 body {
   text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  line-height: 1.5;
 }
 
-/* Scrollbar */
+/* ══════════════════════════════════════════════════
+   §15 Typography — optical sizing, tracking, leading
+   ══════════════════════════════════════════════════ */
+
+h1, .display {
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-optical-sizing: auto;
+}
+
+h2 {
+  letter-spacing: -0.01em;
+  font-optical-sizing: auto;
+}
+
+/* Tabular numbers for data tables */
+[data-tabular] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ══════════════════════════════════════════════════
+   §1 Response — instant feedback on press
+   ══════════════════════════════════════════════════ */
+
+/* Press-down feedback — responds on pointer-down, not on release */
+.btn-press:active,
+[data-press]:active {
+  transform: scale(0.97);
+  transition: transform 0.08s ease-out;
+}
+
+/* Spring hover — no scale, just border/shadow */
+.spring-hover {
+  transition: border-color 0.2s ease,
+              box-shadow 0.2s ease;
+}
+
+/* ══════════════════════════════════════════════════
+   §4 Springs — interruptible, velocity-aware
+   ══════════════════════════════════════════════════ */
+
+/* Spring-like cubic-bezier for hover transitions
+   (critically damped approximation: no overshoot, smooth settle) */
+.spring-hover-smooth {
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Snappy spring for instant interactions */
+.spring-snap {
+  transition: all 0.15s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Bouncy spring for momentum-driven actions (flick, throw) */
+.spring-bounce {
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ══════════════════════════════════════════════════
+   §12 Materials & Depth — translucency hierarchy
+   ══════════════════════════════════════════════════ */
+
+/* Glass surface — toolbar/nav grade */
+.glass-toolbar {
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Glass card — lighter surface for interactive elements */
+.glass-card {
+  background: rgba(22, 22, 22, 0.65);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Glass card hover — subtle lift */
+.glass-card-interactive {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.glass-card-interactive:hover {
+  border-color: rgba(255, 255, 255, 0.10);
+  background: rgba(28, 28, 28, 0.72);
+}
+
+/* Light-catch edge — bright top border to simulate material catching light */
+.material-edge {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Contextual shadow — heavier over content, lighter over plain bg */
+.shadow-card {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.shadow-heavy {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Raised card — slight lift on hover via shadow */
+.shadow-lift {
+  transition: box-shadow 0.25s ease;
+}
+.shadow-lift:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* ══════════════════════════════════════════════════
+   §9 Rubber-banding — soft boundaries
+   ══════════════════════════════════════════════════ */
+
+/* Scroll edge effects — gradient mask instead of hard dividers */
+.scroll-edge-bottom {
+  mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+}
+
+.scroll-edge-top {
+  mask-image: linear-gradient(to top, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%);
+}
+
+/* ══════════════════════════════════════════════════
+   §14 Reduced Motion & Accessibility
+   ══════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .spring-hover,
+  .spring-snap,
+  .spring-bounce,
+  .spring-hover-smooth {
+    transition: none !important;
+  }
+
+  .spring-hover:hover {
+    transform: none !important;
+  }
+
+  /* Replace slides/springs with opacity cross-fades */
+  @keyframes slideUp {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass-toolbar,
+  .glass-card {
+    background: #000;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   Focus — visible indicators for keyboard nav
+   ══════════════════════════════════════════════════ */
+
+:focus-visible {
+  outline: 2px solid rgba(227, 25, 55, 0.6);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ══════════════════════════════════════════════════
+   Scrollbar — polished
+   ══════════════════════════════════════════════════ */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -116,7 +337,20 @@ hr {
   }
 }
 
+/* ══════════════════════════════════════════════════
+   Entrance animation — materialize, don't just fade
+   ══════════════════════════════════════════════════ */
+
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(40px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes materialize {
+  from { opacity: 0; transform: scale(0.97) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.animate-materialize {
+  animation: materialize 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
 }

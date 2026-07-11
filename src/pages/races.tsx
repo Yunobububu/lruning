@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import Layout from '@/components/Layout';
 import racesData from '@/static/races.json';
 
@@ -29,7 +30,7 @@ const paceToStr = (s: number) => {
 };
 
 const RaceCard = ({ race, index }: { race: Race; index: number }) => (
-  <Link to={`/races/${index}`} className="block rounded-2xl bg-[#111] border border-zinc-800 p-6 hover:border-zinc-600 transition-colors">
+  <Link to={`/races/${index}`} className="block rounded-2xl glass-card p-6 glass-card-interactive shadow-card">
     {/* Date */}
     <p className="text-xs text-accent font-medium mb-2">{race.date}</p>
     {/* Name */}
@@ -82,7 +83,12 @@ const Races = () => {
     <Layout>
       <div className="mx-auto max-w-5xl px-4 py-12 lg:px-8 lg:pt-16">
         {/* Hero */}
-        <div className="text-center mb-16">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.15 }}
+        >
           <h1 className="text-6xl lg:text-8xl font-black text-white tracking-tight">
             奔跑
           </h1>
@@ -92,7 +98,7 @@ const Races = () => {
           <p className="mt-4 text-sm text-zinc-500 italic">
             记录每一次心跳，每一公里，每一块奖牌的故事。
           </p>
-        </div>
+        </motion.div>
 
         {/* Year sections */}
         {yearGroups.map(([year, races]) => (
