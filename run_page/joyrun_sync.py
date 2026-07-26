@@ -145,7 +145,7 @@ class JoyrunAuth:
 
 
 class Joyrun:
-    base_url = "https://api.thejoyrun.com"
+    base_url = "http://api.thejoyrun.com"
 
     def __init__(self, user_name="", identifying_code="", uid=0, sid=""):
         self.user_name = user_name
@@ -155,6 +155,7 @@ class Joyrun:
         self.sid = sid
 
         self.session = requests.Session()
+        self.session.verify = False
 
         self.session.headers.update(self.base_headers)
         self.session.headers.update(self.device_info_headers)
